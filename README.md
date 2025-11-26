@@ -1,38 +1,82 @@
-Role Name
-=========
+# Ansible Role: Vector
 
-A brief description of the role goes here.
+Данная Ansible-роль устанавливает агент сбора логов **Vector** (https://vector.dev) на Debian/Ubuntu-серверы.  
+Установка выполняется через загрузку и установку `.deb` пакета и включает запуск systemd-сервиса.
 
-Requirements
-------------
+---
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+## Поддерживаемые ОС
 
-Role Variables
---------------
+- Ubuntu 20.04+
+- Debian 10+
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+---
 
-Dependencies
-------------
+## Использование
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### Пример playbook
 
-Example Playbook
-----------------
+```yaml
+- hosts: all
+  become: true
+  roles:
+    - vector
+```
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+---
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+## Переменные роли
 
-License
--------
+### Vars (`vars/main.yml`)
 
-BSD
+| Переменная | Значение по умолчанию | Описание |
+|-----------|------------------------|----------|
+| `vector_version` | `"0.51.1-1"` | Версия пакета Vector |
+| `vector_prerequisites` | `[ca-certificates, curl]` | Пакеты, необходимые до установки |
 
-Author Information
-------------------
+### Defaults
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+В этой роли файл `defaults/main.yml` отсутствует — переопределяемые значения находятся в `vars/main.yml`.  
+При необходимости пользователь может переопределить переменные вручную.
+
+---
+
+## Что делает роль
+
+### Tasks (`tasks/main.yml`)
+
+1. Устанавливает необходимые пакеты (`ca-certificates`, `curl`)
+2. Определяет архитектуру системы (`dpkg --print-architecture`)
+3. Загружает `.deb` пакет Vector с официального репозитория
+4. Устанавливает Vector с помощью `apt`
+5. Запускает и включает сервис Vector через systemd
+
+---
+
+## Шаблоны
+
+Роль **не использует шаблоны** и не создаёт конфигурационные файлы Vector.
+
+---
+
+## Handlers
+
+Роль **не содержит handlers**, так как не выполняет конфигурацию Vector.
+
+---
+
+## Пример переопределения версии Vector
+
+```yaml
+vector_version: "0.50.0-1"
+```
+
+---
+
+## Лицензия
+
+MIT
+
+## Автор
+
+[Дамир Гайнуллин](https://github.com/Reqroot-pro)
